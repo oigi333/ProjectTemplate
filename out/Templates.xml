@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<root>
+	<template name="a">
+		<file path="a1\b1.txt">a
+
+
+a
+
+
+df
+asdas
+
+sdadas
+
+sadsd</file>
+		<folder path="a1\d" />
+		<folder path="a2" />
+		<file path="a3\b3.txt"></file>
+		<folder path="aaa" />
+	</template>
+</root>
