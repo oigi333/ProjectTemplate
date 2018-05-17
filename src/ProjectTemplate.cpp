@@ -10,7 +10,7 @@
 #include "pugixml/pugixml.hpp"
 
 
-ProjectTemplate::ProjectTemplate() 
+ProjectTemplate::ProjectTemplate()
 {
 
 }
@@ -27,13 +27,13 @@ ProjectTemplate ProjectTemplate::FromFolder(std::string folderFileName)
 
         if(boost::filesystem::is_directory( elem.path() ))
         {
-            pt.files[elem.path()] = File("", true); 
+            pt.files[elem.path()] = File("", true);
             continue;
         }
         std::ifstream ifs(elem.path().string());
         std::stringstream ss;
         ss << ifs.rdbuf();
-        pt.files[elem.path()] = File(ss.str()); 
+        pt.files[elem.path()] = File(ss.str());
     }
     return pt;
 }
@@ -41,7 +41,7 @@ ProjectTemplate ProjectTemplate::FromFolder(std::string folderFileName)
 ProjectTemplate ProjectTemplate::FromXML(std::string appFileName, std::string templateName)
 {
     ProjectTemplate pt;
-    bool finded = false;
+    bool found = false;
 
     pugi::xml_document doc;
     doc.load_file(((boost::filesystem::path(appFileName)).parent_path().wstring()+L"\\Templates.xml").c_str());
@@ -50,7 +50,7 @@ ProjectTemplate ProjectTemplate::FromXML(std::string appFileName, std::string te
     {
         if(projectTemplateNode.attribute("name").as_string()==templateName)
         {
-            finded=true;
+            found=true;
             for(auto fileNode: projectTemplateNode)
             {
                 if(std::string(fileNode.name())==std::string("file"))
@@ -62,8 +62,8 @@ ProjectTemplate ProjectTemplate::FromXML(std::string appFileName, std::string te
         }
     }
 
-    if(!finded)
-        throw TemplateNotFindedException();
+    if(!found)
+        throw TemplateNotFoundException();
 
     return pt;
 }
@@ -88,9 +88,9 @@ void ProjectTemplate::SaveXML(std::string appFileName,std::string folderFileName
             fileNode = projectTemplateNode.append_child("file");
             fileNode.append_child(pugi::node_pcdata).set_value(file.second.Data.c_str());
         }
-        
+
         fileNode.append_attribute("path") = filePathString.c_str();
-        
+
     }
 
     doc.save_file((
@@ -113,7 +113,7 @@ void ProjectTemplate::SaveFolder(std::string folderFileName)
         else
         {
             boost::filesystem::create_directories(folderFileName+ProjectTemplate::Slash+file.first.parent_path().string());
-            
+
             std::ofstream ofs(folderFileName+ProjectTemplate::Slash+file.first.string());
             ofs<<file.second.Data;
             ofs.close();
@@ -123,7 +123,7 @@ void ProjectTemplate::SaveFolder(std::string folderFileName)
 
 void ProjectTemplate::DeleteTemplate(std::string appFileName, std::string templateName)
 {
-    bool finded = false;
+    bool found = false;
 
     pugi::xml_document doc;
     doc.load_file((
@@ -138,14 +138,14 @@ void ProjectTemplate::DeleteTemplate(std::string appFileName, std::string templa
     {
         if(projectTemplateNode.attribute("name").as_string()==templateName)
         {
-            finded=true;
+            found=true;
             root.remove_child(projectTemplateNode);
             break;
         }
     }
 
-    if(!finded)
-        throw TemplateNotFindedException();
+    if(!found)
+        throw TemplateNotFoundException();
 
     doc.save_file((
         (boost::filesystem::path(appFileName)).parent_path().wstring()

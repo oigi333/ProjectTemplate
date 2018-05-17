@@ -24,10 +24,10 @@ class ProjectTemplate
 
     void SaveXML(std::string appFileName,std::string folderFileName, std::string templateName);
     void SaveFolder(std::string folderFileName);
-        
+
     static ProjectTemplate FromFolder(std::string folderFileName);
     static ProjectTemplate FromXML(std::string appFileName, std::string templateName);
     static void DeleteTemplate(std::string appFileName, std::string templateName);
 
-    class TemplateNotFindedException: std::exception {};
+    class TemplateNotFoundException: std::exception {};
 };
